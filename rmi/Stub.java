@@ -102,7 +102,7 @@ public abstract class Stub
         @throws Error If <code>c</code> does not represent a remote interface
                       - an interface in which each method is marked as throwing
                       <code>RMIException</code>, or if an object implementing
-                      this interface cannot be dynamically created.
+                      this interf   ace cannot be dynamically created.
      */
     public static <T> T create(Class<T> c, InetSocketAddress address)
     {
