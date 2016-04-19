@@ -1,7 +1,8 @@
 package rmi;
 
 import java.net.*;
-
+import java.lang.reflect.Proxy;
+import java.lang.reflect.InvocationHandler;
 /** RMI stub factory.
 
     <p>
@@ -48,7 +49,7 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton)
         throws UnknownHostException
     {
-        throw new UnsupportedOperationException("not implemented");
+        return create(c, skeleton.address);
     }
 
     /** Creates a stub, given a skeleton with an assigned address and a hostname
@@ -84,7 +85,7 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton,
                                String hostname)
     {
-        throw new UnsupportedOperationException("not implemented");
+        return create(c, new InetSocketAddress(hostname, skeleton.address.getPort()));
     }
 
     /** Creates a stub, given the address of a remote server.
@@ -106,6 +107,11 @@ public abstract class Stub
      */
     public static <T> T create(Class<T> c, InetSocketAddress address)
     {
-        throw new UnsupportedOperationException("not implemented");
+        // Create a Proxy object for the interface c
+        InvocationHandler handler = new RMIInvocationHandler(address);
+
+        @SuppressWarnings("unchecked")
+        T stub = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class<?>[]{c}, handler);
+        return stub;
     }
 }

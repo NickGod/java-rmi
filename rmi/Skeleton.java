@@ -1,6 +1,8 @@
 package rmi;
 
 import java.net.*;
+import java.io.*;
+import java.util.*;
 
 /** RMI skeleton
 
@@ -26,6 +28,11 @@ import java.net.*;
 */
 public class Skeleton<T>
 {
+    T server;
+    InetSocketAddress address;
+    ServerSocket socketServer;
+    ArrayList<SkeletonThread<T>> threads;
+
     /** Creates a <code>Skeleton</code> with no initial server address. The
         address will be determined by the system when <code>start</code> is
         called. Equivalent to using <code>Skeleton(null)</code>.
@@ -47,7 +54,7 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server)
     {
-        throw new UnsupportedOperationException("not implemented");
+        this.server = server;
     }
 
     /** Creates a <code>Skeleton</code> with the given initial server address.
@@ -70,7 +77,8 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server, InetSocketAddress address)
     {
-        throw new UnsupportedOperationException("not implemented");
+        this.server = server;
+        this.address = address;
     }
 
     /** Called when the listening thread exits.
@@ -141,7 +149,23 @@ public class Skeleton<T>
      */
     public synchronized void start() throws RMIException
     {
-        throw new UnsupportedOperationException("not implemented");
+        this.threads = new ArrayList<SkeletonThread<T>>();
+        try {
+            if(this.address == null) {
+                socketServer = new ServerSocket();
+            }
+            else {
+                socketServer = new ServerSocket(this.address.getPort());
+            }
+            while(true) {
+                Socket socket = socketServer.accept();
+                (new SkeletonThread<T>(socket, this.server)).start();
+            }
+        }
+        catch(IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
     }
 
     /** Stops the skeleton server, if it is already running.
@@ -155,6 +179,17 @@ public class Skeleton<T>
      */
     public synchronized void stop()
     {
-        throw new UnsupportedOperationException("not implemented");
+        try {
+            for(SkeletonThread<T> thread: this.threads) {
+                thread.join();
+            }
+            this.socketServer.close();
+        }
+        catch(InterruptedException e) {
+
+        }
+        catch(IOException e) {
+            
+        }
     }
 }
