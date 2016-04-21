@@ -29,8 +29,9 @@ public class RMIInvocationHandler implements InvocationHandler {
 
         InvocationHandler stubhandler = Proxy.getInvocationHandler(stub);
 
-        // Invoke getInetSocketAddress method from stub
+
         try {
+            // Invoke getInetSocketAddress method from stub
             Method inetMethod = RMIInvocationHandler.class.getMethod("getInetSocketAddress");
             @SuppressWarnings("unchecked")
             InetSocketAddress address = (InetSocketAddress) stubhandler.invoke(stub, inetMethod, new Object[]{});
@@ -84,9 +85,11 @@ public class RMIInvocationHandler implements InvocationHandler {
         }
 
         try {
+            System.out.println("---------------" + this.skeletonAddress.toString());
             socket = new Socket(this.skeletonAddress.getAddress(),
                                        this.skeletonAddress.getPort());
             objOutput = new ObjectOutputStream(socket.getOutputStream());
+            System.out.println("--------------- Connected!");
 
 
             System.out.println("\n\n---Writing " + method.getName());

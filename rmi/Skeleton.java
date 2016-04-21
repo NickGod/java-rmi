@@ -186,10 +186,6 @@ public class Skeleton<T>
                                                 );
             }
         }
-        // catch(Throwable t)
-        // {
-        //     System.out.println(t.getMessage());
-        // }
         catch(IOException e) {
             //System.out.println("\n\n-----Fail!-----");
             System.err.println(e.getMessage());

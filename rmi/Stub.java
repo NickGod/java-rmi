@@ -53,6 +53,11 @@ public abstract class Stub
         if(skeleton.address == null) {
             throw new IllegalStateException();
         }
+
+        if(!skeleton.address.getAddress().isAnyLocalAddress()) {
+            throw new UnknownHostException();
+        }
+
         return create(c, skeleton.address);
     }
 
@@ -130,8 +135,6 @@ public abstract class Stub
         }
 
         // Create a Proxy object for the interface c
-
-
         InvocationHandler handler = new RMIInvocationHandler(c, address);
 
         @SuppressWarnings("unchecked")

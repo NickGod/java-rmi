@@ -122,6 +122,7 @@ public class StubTest extends Test
         // Bind the listening socket.
         try
         {
+            System.out.println("--------- Binding " + address.toString());
             socket.bind(address);
         }
         catch(Exception e)
@@ -133,6 +134,7 @@ public class StubTest extends Test
         // Start the listening thread. The thread will not be able to call wake
         // until this function calls wait.
         new Thread(new ConnectionCheckThread()).start();
+        System.out.println("--- ensureStubConnects running ---");
 
         // Attempt to connect to the listening server.
         try
@@ -484,6 +486,7 @@ public class StubTest extends Test
         {
             try
             {
+                System.out.println("---------- ConnectionCheckThread Waiting");
                 Socket  connected = socket.accept();
 
                 try
