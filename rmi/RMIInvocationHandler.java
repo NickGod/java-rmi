@@ -18,6 +18,7 @@ public class RMIInvocationHandler implements InvocationHandler {
             ObjectOutputStream objOutput = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream objInput = new ObjectInputStream(socket.getInputStream());
 
+            System.out.println("\n\n")
             objOutput.writeObject(method.getName());
             objOutput.writeObject(method.getParameterTypes());
             objOutput.writeObject(args);

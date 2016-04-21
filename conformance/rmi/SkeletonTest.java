@@ -78,7 +78,7 @@ public class SkeletonTest extends Test
             throw new TestFailed("skeleton refuses connections after start");
 
         skeleton.stop();
-        System.out.println("----- Skeleton stopped! -----");
+        //System.out.println("----- Skeleton stopped! -----");
 
         synchronized(this)
         {
@@ -114,8 +114,8 @@ public class SkeletonTest extends Test
 
         try
         {
-            System.out.printf("\n\n----- Connecting on %s:%d-----\n",
-                                    this.address.getHostName(), this.address.getPort());
+            //System.out.printf("\n\n----- Connecting on %s:%d-----\n",
+            //                        this.address.getHostName(), this.address.getPort());
             socket.connect(address);
         }
         catch(Exception e)

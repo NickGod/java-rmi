@@ -1,6 +1,7 @@
 package rmi;
 
 import java.net.*;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.InvocationHandler;
 /** RMI stub factory.
@@ -49,6 +50,9 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton)
         throws UnknownHostException
     {
+        if(skeleton.address == null) {
+            throw new IllegalStateException();
+        }
         return create(c, skeleton.address);
     }
 
@@ -85,6 +89,12 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton,
                                String hostname)
     {
+        if(skeleton.address == null) {
+            throw new IllegalStateException();
+        }
+        if(hostname == null) {
+            throw new NullPointerException();
+        }
         return create(c, new InetSocketAddress(hostname, skeleton.address.getPort()));
     }
 
@@ -103,15 +113,41 @@ public abstract class Stub
         @throws Error If <code>c</code> does not represent a remote interface
                       - an interface in which each method is marked as throwing
                       <code>RMIException</code>, or if an object implementing
-                      this interf   ace cannot be dynamically created.
+                      this interface cannot be dynamically created.
      */
     public static <T> T create(Class<T> c, InetSocketAddress address)
     {
+        if(c == null || address == null) {
+            throw new NullPointerException();
+        }
+
+        if(!isRemoteInterface(c)) {
+            throw new Error();
+        }
+
         // Create a Proxy object for the interface c
         InvocationHandler handler = new RMIInvocationHandler(address);
 
         @SuppressWarnings("unchecked")
         T stub = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class<?>[]{c}, handler);
         return stub;
+    }
+
+
+    private static <T> boolean isRemoteInterface(Class<T> intf) {
+        Method[] methods = intf.getMethods();
+        for (Method m: methods) {
+            Class<?>[] ecpt = m.getExceptionTypes();
+            boolean found = false;
+            for(Class<?> c: ecpt) {
+                if(c.getName().equals("rmi.RMIException")) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return false;
+        }
+        return true;
     }
 }

@@ -193,11 +193,14 @@ public class Skeleton<T>
     {
         try{
             if(this.address == null) {
-                //System.out.println("\n\n----- Start a Skeleton on default port -----\n");
-                this.socketServer = new ServerSocket();
+                this.socketServer = new ServerSocket(0);
+                System.out.printf("\n\n----- Start a Skeleton on default port %s-----\n", this.socketServer.getInetAddress());
+                this.address = new InetSocketAddress(this.socketServer.getInetAddress(),
+                                                        this.socketServer.getLocalPort());
+
             }
             else {
-                //System.out.printf("\n\n----- Start a Skeleton on %d-----\n", this.address.getPort());
+                System.out.printf("\n\n----- Start a Skeleton on %d-----\n", this.address.getPort());
                 this.socketServer = new ServerSocket(
                                                 this.address.getPort(),
                                                 1000,
@@ -205,14 +208,20 @@ public class Skeleton<T>
                                                 );
             }
         }
+        // catch(Throwable t)
+        // {
+        //     System.out.println(t.getMessage());
+        // }
         catch(IOException e) {
+            //System.out.println("\n\n-----Fail!-----");
             System.err.println(e.getMessage());
             System.exit(1);
         }
+        System.out.println("\n\n-----Start Skeleton Thread-----");
         this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,
                                                     this.intf, this.server));
-        System.out.printf("\n\n----- Waiting for a connection on %s:%d-----\n",
-                                this.address.getHostName(), this.address.getPort());
+        //System.out.printf("\n\n----- Waiting for a connection on %s:%d-----\n",
+        //                        this.address.getHostName(), this.address.getPort());
         this.skeletonThread.start();
     }
 
