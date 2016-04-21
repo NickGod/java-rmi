@@ -14,11 +14,21 @@ public class ServerThread<T> extends Thread {
         this.intf = intf;
     }
     public void run() {
+        ObjectOutputStream objOutput = null;
+        ObjectInputStream objInput = null;
         try {
-            ObjectOutputStream objOutput = new ObjectOutputStream(this.socket.getOutputStream());
+            objOutput = new ObjectOutputStream(this.socket.getOutputStream());
             objOutput.flush();
-            ObjectInputStream objInput = new ObjectInputStream(this.socket.getInputStream());
+            objInput = new ObjectInputStream(this.socket.getInputStream());
+        }
+        catch(Exception e) {
+            System.err.println(e.getMessage());
+            close(objInput);
+            close(objOutput);
+            return;
+        }
 
+        try {
             @SuppressWarnings("unchecked")
             String methodName = (String) objInput.readObject();
             @SuppressWarnings("unchecked")
@@ -31,23 +41,30 @@ public class ServerThread<T> extends Thread {
             Object ret = method.invoke(this.server, params);
 
             objOutput.writeObject(ret);
+            objOutput.flush();
         }
-        catch(NoSuchMethodException e) {
-
-        }
-        catch(IllegalAccessException e) {
-
-        }
-        catch(InvocationTargetException e) {
-            objOutput.writeObject(e);
-        }
-        catch(ClassNotFoundException e) {
+        catch (Exception e){
             System.err.println(e.getMessage());
-            System.exit(1);
+            try{
+                objOutput.writeObject(e);
+                objOutput.flush();
+            }
+            catch (Exception ee){
+                System.err.println(e.getMessage());
+            }
         }
-        catch(IOException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+        finally {
+            close(objInput);
+            close(objOutput);
+        }
+    }
+
+    public static void close(Closeable c) {
+        if (c == null) return;
+        try {
+            c.close();
+        } catch (IOException e) {
+            //log the exception
         }
     }
 }
