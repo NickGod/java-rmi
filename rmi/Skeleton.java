@@ -141,6 +141,8 @@ public class Skeleton<T>
      */
     protected boolean listen_error(Exception exception)
     {
+        stop();
+        stopped(exception);
         return false;
     }
 
@@ -186,17 +188,28 @@ public class Skeleton<T>
                                                 );
             }
         }
-        catch(IOException e) {
-            //System.out.println("\n\n-----Fail!-----");
-            System.err.println(e.getMessage());
-            System.exit(1);
+// <<<<<<< HEAD
+//         catch(IOException e) {
+//             //System.out.println("\n\n-----Fail!-----");
+//             System.err.println(e.getMessage());
+//             System.exit(1);
+// =======
+        catch(Exception e) {
+            service_error(new RMIException(e));
+// >>>>>>> c2bc14e1c0f16e342ccbe71cfb7b1f35f0b98329
         }
         System.out.println("\n\n-----Start Skeleton Thread-----");
         this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,
                                                     this.intf, this.server));
         //System.out.printf("\n\n----- Waiting for a connection on %s:%d-----\n",
         //                        this.address.getHostName(), this.address.getPort());
-        this.skeletonThread.start();
+        try {
+            this.skeletonThread.start();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            listen_error(e);
+        }
     }
 
     /** Stops the skeleton server, if it is already running.
@@ -212,14 +225,18 @@ public class Skeleton<T>
     {
         try {
             socketServer.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            service_error(new RMIException(e));
+        }
+        try {
             skeletonThread.join();
             stopped(null);
         }
-        catch(InterruptedException e) {
-
-        }
-        catch(IOException e) {
-
+        catch(Exception e) {
+            e.printStackTrace();
+            listen_error(e);
         }
     }
 
