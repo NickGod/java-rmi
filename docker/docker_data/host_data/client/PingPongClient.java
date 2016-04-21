@@ -12,7 +12,7 @@ public class PingPongClient{
     private ServerSocket                socket;
 
     public PingPongClient(int portnumber){
-        address = new InetSocketAddress(portnumber);
+        address = new InetSocketAddress("server", portnumber);
 
     }
 
