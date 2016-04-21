@@ -32,6 +32,7 @@ public class Skeleton<T>
     InetSocketAddress address;
     ServerSocket socketServer;
     ArrayList<SkeletonThread<T>> threads;
+    Class<T> intf;
 
     /** Creates a <code>Skeleton</code> with no initial server address. The
         address will be determined by the system when <code>start</code> is
@@ -54,7 +55,16 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server)
     {
+        if(!c.isInterface()) {
+            throw new Error();
+        }
+
+        if(!isAssignableFromServer(c, server.getClass())) {
+            System.out.println("\nCreated!");
+            throw new Error();
+        }
         this.server = server;
+        this.intf = c;
     }
 
     /** Creates a <code>Skeleton</code> with the given initial server address.
@@ -77,6 +87,15 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server, InetSocketAddress address)
     {
+        if(!c.isInterface()) {
+            throw new Error();
+        }
+
+        if(!isAssignableFromServer(c, server.getClass())) {
+            throw new Error();
+        }
+
+        this.intf = c;
         this.server = server;
         this.address = address;
     }
@@ -159,7 +178,7 @@ public class Skeleton<T>
             }
             while(true) {
                 Socket socket = socketServer.accept();
-                (new SkeletonThread<T>(socket, this.server)).start();
+                (new SkeletonThread<T>(socket, this.server, this.intf)).start();
             }
         }
         catch(IOException e) {
@@ -191,5 +210,10 @@ public class Skeleton<T>
         catch(IOException e) {
 
         }
+    }
+
+    ////////////////////////////////////// Helper Function /////////////////////////////////////////
+    private boolean isAssignableFromServer(Class<T> intf, Class<?> server) {
+        return intf.isAssignableFrom(server);
     }
 }

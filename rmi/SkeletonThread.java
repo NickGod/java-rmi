@@ -6,10 +6,12 @@ import java.lang.reflect.*;
 public class SkeletonThread<T> extends Thread {
     Socket socket = null;
     T server = null;
+    Class<T> intf;
 
-    public SkeletonThread(Socket socket, T server) {
+    public SkeletonThread(Socket socket, T server, Class<T> intf) {
         this.socket = socket;
         this.server = server;
+        this.intf = intf;
     }
     public void run() {
         try {
@@ -23,6 +25,7 @@ public class SkeletonThread<T> extends Thread {
             Object[] params = (Object[]) objInput.readObject();
 
             Method method = this.server.getClass().getMethod(methodName, paramTypes);
+            
             Object ret = method.invoke(this.server, params);
 
             ObjectOutputStream objOutput = new ObjectOutputStream(this.socket.getOutputStream());
@@ -35,7 +38,7 @@ public class SkeletonThread<T> extends Thread {
 
         }
         catch(InvocationTargetException e) {
-            
+
         }
         catch(ClassNotFoundException e) {
             System.err.println(e.getMessage());
