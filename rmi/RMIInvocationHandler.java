@@ -89,7 +89,7 @@ public class RMIInvocationHandler implements InvocationHandler {
             socket = new Socket(this.skeletonAddress.getAddress(),
                                        this.skeletonAddress.getPort());
             objOutput = new ObjectOutputStream(socket.getOutputStream());
-            objInput = new ObjectInputStream(socket.getInputStream());
+
 
             System.out.println("--------------- Connected!");
 
@@ -102,7 +102,7 @@ public class RMIInvocationHandler implements InvocationHandler {
             objOutput.writeObject(args);
             objOutput.flush();
 
-
+            objInput = new ObjectInputStream(socket.getInputStream());
             result = objInput.readObject();
         }
         catch(UnknownHostException e) {
