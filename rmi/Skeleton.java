@@ -175,12 +175,12 @@ public class Skeleton<T>
         try{
             if(this.address == null) {
                 this.socketServer = new ServerSocket(0);
-                System.out.printf("\n\n----- Start a Skeleton on default port %s-----\n", this.socketServer.getInetAddress());
+                //System.out.printf("\n\n----- Start a Skeleton on default port %s-----\n", this.socketServer.getInetAddress());
                 this.address = new InetSocketAddress(this.socketServer.getInetAddress(),
                                                         this.socketServer.getLocalPort());
             }
             else {
-                System.out.printf("\n\n----- Start a Skeleton on %d-----\n", this.address.getPort());
+                //System.out.printf("\n\n----- Start a Skeleton on %d-----\n", this.address.getPort());
                 this.socketServer = new ServerSocket(
                                                 this.address.getPort(),
                                                 1000,
@@ -191,7 +191,7 @@ public class Skeleton<T>
         catch(Exception e) {
             service_error(new RMIException(e));
         }
-        System.out.println("\n\n-----Start Skeleton Thread-----");
+        //System.out.println("\n\n-----Start Skeleton Thread-----");
         this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,
                                                     this.intf, this.server));
         //System.out.printf("\n\n----- Waiting for a connection on %s:%d-----\n",

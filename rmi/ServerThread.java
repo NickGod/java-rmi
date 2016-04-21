@@ -16,13 +16,7 @@ public class ServerThread<T> extends Thread {
     public void run() {
         ObjectOutputStream objOutput = null;
         ObjectInputStream objInput = null;
-
         Object ret = null;
-        String methodName = null;
-        Class<T>[] paramTypes = null;
-        Object[] params = null;
-        Method method = null;
-
 
         try {
             objOutput = new ObjectOutputStream(this.socket.getOutputStream());
@@ -38,22 +32,14 @@ public class ServerThread<T> extends Thread {
 
         try {
             @SuppressWarnings("unchecked")
-            String _methodName = (String) objInput.readObject();
+            String methodName = (String) objInput.readObject();
             @SuppressWarnings("unchecked")
-            Class<T>[] _paramTypes = (Class<T>[]) objInput.readObject();
+            Class<T>[] paramTypes = (Class<T>[]) objInput.readObject();
             @SuppressWarnings("unchecked")
-            Object[] _params = (Object[]) objInput.readObject();
-            methodName = _methodName;
-            paramTypes = _paramTypes;
-            params = _params;
+            Object[] params = (Object[]) objInput.readObject();
 
-            method = this.server.getClass().getMethod(methodName, paramTypes);
-        }
-        catch(Exception e) {
-            //throw new RMIException(e);
-        }
+            Method method = this.server.getClass().getMethod(methodName, paramTypes);
 
-        try{
             ret = method.invoke(this.server, params);
         }
         catch(Exception e) {
@@ -62,8 +48,12 @@ public class ServerThread<T> extends Thread {
             }
             else {
                 //throw new RMIException(e);
+                close(objInput);
+                close(objOutput);
+                return;
             }
         }
+
         try {
             objOutput.writeObject(ret);
         }

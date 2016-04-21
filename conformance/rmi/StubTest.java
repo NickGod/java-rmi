@@ -96,7 +96,7 @@ public class StubTest extends Test
         skeleton.stop();
 
         ensureStubConnects();
-        System.out.println("!!!!!!!!!stub test finish!!!!!!!");
+        //System.out.println("!!!!!!!!!stub test finish!!!!!!!");
     }
 
     /** Checks that a stub connects to the server for which it was created.
@@ -105,7 +105,7 @@ public class StubTest extends Test
      */
     private void ensureStubConnects() throws TestFailed
     {
-        System.out.println("--- ensureStubConnects ---");
+        //System.out.println("--- ensureStubConnects ---");
 
         TestInterface   stub;
 
@@ -123,7 +123,7 @@ public class StubTest extends Test
         // Bind the listening socket.
         try
         {
-            System.out.println("--------- Binding " + address.toString());
+            //System.out.println("--------- Binding " + address.toString());
             socket.bind(address);
         }
         catch(Exception e)
@@ -135,12 +135,12 @@ public class StubTest extends Test
         // Start the listening thread. The thread will not be able to call wake
         // until this function calls wait.
         new Thread(new ConnectionCheckThread()).start();
-        System.out.println("--- ensureStubConnects running ---");
+        //System.out.println("--- ensureStubConnects running ---");
 
         // Attempt to connect to the listening server.
         try
         {
-            System.out.println("--------------Call Begins");
+            //System.out.println("--------------Call Begins");
             stub.method(false);
         }
         catch(RMIException e)
@@ -149,7 +149,7 @@ public class StubTest extends Test
         }
         catch(Throwable t)
         {
-            System.out.println("-------------- Throwable");
+            //System.out.println("-------------- Throwable");
             throw new TestFailed("exception when attempting to connect to " +
                                  "server", t);
         }
@@ -229,7 +229,7 @@ public class StubTest extends Test
      */
     private void ensureNonRemoteInterfaceRejected() throws TestFailed
     {
-        System.out.println("---ensureNonRemoteInterfaceRejected---");
+        //System.out.println("---ensureNonRemoteInterfaceRejected---");
         try
         {
             BadInterface    stub = Stub.create(BadInterface.class, address);
@@ -255,7 +255,7 @@ public class StubTest extends Test
      */
     private void ensureNullPointerExceptions() throws TestFailed
     {
-        System.out.println("---ensureNullPointerExceptions---");
+        //System.out.println("---ensureNullPointerExceptions---");
         // Make sure that null for the first argument is rejected.
         try
         {
@@ -476,7 +476,7 @@ public class StubTest extends Test
         {
             throw new TestFailed("toString threw an unexpected exception", t);
         }
-        System.out.println("--- ensureLocalMethods finished ---");
+        //System.out.println("--- ensureLocalMethods finished ---");
     }
 
     /** Thread listening for a connection. */
@@ -489,7 +489,7 @@ public class StubTest extends Test
         {
             try
             {
-                System.out.println("---------- ConnectionCheckThread Waiting");
+                //System.out.println("---------- ConnectionCheckThread Waiting");
                 Socket  connected = socket.accept();
 
                 try

@@ -74,7 +74,7 @@ public class ThreadTest extends Test
             throw new TestFailed("unable to rendezvous in first thread", t);
         }
 
-        System.out.println("!!!!!ThreadTest finish!!!!!!");
+        //System.out.println("!!!!!ThreadTest finish!!!!!!");
     }
 
     /** Stops the skeleton server. */

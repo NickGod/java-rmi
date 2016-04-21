@@ -53,7 +53,7 @@ public class ConnectionTest extends Test
         // address explicitly. Make sure both can connect to the skeleton and
         // communicate with it correctly.
 
-        System.out.println("===============================================Connection Test Begins");
+        //System.out.println("===============================================Connection Test Begins");
         TestInterface   stub_implicit;
         TestInterface   stub_explicit;
 
@@ -86,7 +86,7 @@ public class ConnectionTest extends Test
         testStub(stub_explicit);
 
         task();
-        System.out.println("!!!!!!!!!ConnectionTest finish!!!!!!!!!!!");
+        //System.out.println("!!!!!!!!!ConnectionTest finish!!!!!!!!!!!");
     }
 
     /** Stops the skeleton server. */
@@ -122,7 +122,7 @@ public class ConnectionTest extends Test
         try
         {
             stub.method(true);
-            
+
             throw new TestFailed("exception expected but not received from " +
                                  "stub");
         }

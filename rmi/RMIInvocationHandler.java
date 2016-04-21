@@ -65,16 +65,14 @@ public class RMIInvocationHandler implements InvocationHandler {
     public String toStringStub() {
         return this.intf.toString();
     }
-
-    // TODO: there should be more constructors
-
+    
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = null;
         Socket socket = null;
         ObjectOutputStream objOutput = null;
         ObjectInputStream objInput = null;
 
-        System.out.println(method.getName());
+        //System.out.println(method.getName());
 
         switch(method.getName()) {
             case "equals":                  return this.equalsStub(args[0]);
@@ -86,20 +84,20 @@ public class RMIInvocationHandler implements InvocationHandler {
         }
 
         try {
-            System.out.println("---------------" + this.skeletonAddress.toString());
+            //System.out.println("---------------" + this.skeletonAddress.toString());
             socket = new Socket(this.skeletonAddress.getAddress(),
                                        this.skeletonAddress.getPort());
             objOutput = new ObjectOutputStream(socket.getOutputStream());
             objOutput.flush();
             objInput = new ObjectInputStream(socket.getInputStream());
 
-            System.out.println("--------------- Connected!");
+            //System.out.println("--------------- Connected!");
 
-            System.out.println("\n\n---Writing " + method.getName());
+            //System.out.println("\n\n---Writing " + method.getName());
             objOutput.writeObject(method.getName());
-            System.out.println("\n\n---Writing " + method.getParameterTypes());
+            //System.out.println("\n\n---Writing " + method.getParameterTypes());
             objOutput.writeObject(method.getParameterTypes());
-            System.out.println("\n\n---Writing " + Arrays.toString(args));
+            //System.out.println("\n\n---Writing " + Arrays.toString(args));
             objOutput.writeObject(args);
             //objOutput.flush();
 
@@ -110,7 +108,7 @@ public class RMIInvocationHandler implements InvocationHandler {
             throw new RMIException(e);
         }
         catch(IOException e) {
-            System.out.println("------------ RMIInvocation");
+            //System.out.println("------------ RMIInvocation");
             throw new RMIException(e);
         }
         finally {
