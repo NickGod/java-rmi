@@ -98,28 +98,7 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server, InetSocketAddress address)
     {
-        // Ensure the interface is not null.
-        if(c == null) {
-            throw new NullPointerException();
-        }
-
-        // Ensure the input c is an interface.
-        if(!c.isInterface()) {
-            throw new Error();
-        }
-
-        // Ensure the interface throw RMIException which make sure it an remote interface
-        if(!isRemoteInterface(c)) {
-            throw new Error();
-        }
-
-        // Ensure the server object has implemented the interface c.
-        if(!isAssignableFromServer(c, server.getClass())) {
-            throw new Error();
-        }
-
-        this.intf = c;
-        this.server = server;
+        Skeleton(c, server);
         this.address = address;
     }
 

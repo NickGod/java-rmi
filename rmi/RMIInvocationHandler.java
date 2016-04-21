@@ -12,22 +12,30 @@ public class RMIInvocationHandler implements InvocationHandler {
     // TODO: there should be more constructors
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable{
+        Object result;
+        Socket socket;
+        ObjectOutputStream objOutput;
+        ObjectInputStream objInput;
         try {
-            Socket socket = new Socket(this.skeletonAddress.getAddress(),
+            socket = new Socket(this.skeletonAddress.getAddress(),
                                        this.skeletonAddress.getPort());
-            ObjectOutputStream objOutput = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream objInput = new ObjectInputStream(socket.getInputStream());
-
+            objOutput = new ObjectOutputStream(socket.getOutputStream());
             objOutput.writeObject(method.getName());
             objOutput.writeObject(method.getParameterTypes());
             objOutput.writeObject(args);
+            objOutput.flush();
 
-            return objInput.readObject();
+            objInput = new ObjectInputStream(socket.getInputStream());
+            result = objInput.readObject();
         }
         catch(IOException e) {
             System.err.println(e.getMessage());
             System.exit(1);
         }
-        return null;
+        finally {
+            objInput.close();
+            objOutput.close();
+            socket.close();
+        }
     }
 }
