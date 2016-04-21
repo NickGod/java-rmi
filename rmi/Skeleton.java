@@ -200,6 +200,7 @@ public class Skeleton<T>
             this.skeletonThread.start();
         }
         catch (Exception e){
+            System.out.println(e.getMessage());
             listen_error(e);
         }
     }
@@ -216,17 +217,19 @@ public class Skeleton<T>
     public synchronized void stop()
     {
         try {
+            socketServer.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            service_error(new RMIException(e));
+        }
+        try {
             skeletonThread.join();
             stopped(null);
         }
         catch(Exception e) {
-            listen_error(e)
-        }
-        try {
-            socketServer.close();
-        }
-        catch (Exception e) {
-            service_error(new RMIException(e));
+            e.printStackTrace();
+            listen_error(e);
         }
     }
 
