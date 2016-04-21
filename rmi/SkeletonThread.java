@@ -1,48 +1,35 @@
 package rmi;
+
 import java.net.*;
 import java.io.*;
+import java.util.*;
 import java.lang.reflect.*;
 
 public class SkeletonThread<T> extends Thread {
-    Socket socket = null;
-    T server = null;
+    ArrayList<ServerThread<T>> threads = new ArrayList<ServerThread<T>>();
+    InetSocketAddress address;
     Class<T> intf;
+    T server;
+    ServerSocket socketServer;
 
-    public SkeletonThread(Socket socket, T server, Class<T> intf) {
-        this.socket = socket;
-        this.server = server;
+    public SkeletonThread(InetSocketAddress address, Class<T> intf, T server) {
+        this.address = address;
         this.intf = intf;
+        this.server = server;
     }
+    
     public void run() {
         try {
-            ObjectInputStream objInput = new ObjectInputStream(this.socket.getInputStream());
-
-            @SuppressWarnings("unchecked")
-            String methodName = (String) objInput.readObject();
-            @SuppressWarnings("unchecked")
-            Class<T>[] paramTypes = (Class<T>[]) objInput.readObject();
-            @SuppressWarnings("unchecked")
-            Object[] params = (Object[]) objInput.readObject();
-
-            Method method = this.server.getClass().getMethod(methodName, paramTypes);
-            
-            Object ret = method.invoke(this.server, params);
-
-            ObjectOutputStream objOutput = new ObjectOutputStream(this.socket.getOutputStream());
-            objOutput.writeObject(ret);
-        }
-        catch(NoSuchMethodException e) {
-
-        }
-        catch(IllegalAccessException e) {
-
-        }
-        catch(InvocationTargetException e) {
-
-        }
-        catch(ClassNotFoundException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+            if(this.address == null) {
+                this.socketServer = new ServerSocket();
+            }
+            else {
+                this.socketServer = new ServerSocket(this.address.getPort());
+            }
+            while(true) {
+                Socket socket = this.socketServer.accept();
+                (new ServerThread<T>(socket, this.server, this.intf)).start();
+            }
         }
         catch(IOException e) {
             System.err.println(e.getMessage());

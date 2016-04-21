@@ -3,6 +3,7 @@ package rmi;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.lang.reflect.*;
 
 /** RMI skeleton
 
@@ -30,8 +31,7 @@ public class Skeleton<T>
 {
     T server;
     InetSocketAddress address;
-    ServerSocket socketServer;
-    ArrayList<SkeletonThread<T>> threads;
+    SkeletonThread skeletonThread;
     Class<T> intf;
 
     /** Creates a <code>Skeleton</code> with no initial server address. The
@@ -55,12 +55,23 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server)
     {
+        // Ensure the interface is not null.
+        if(c == null) {
+            throw new NullPointerException();
+        }
+
+        // Ensure the input c is an interface.
         if(!c.isInterface()) {
             throw new Error();
         }
 
+        // Ensure the interface throw RMIException which make sure it an remote interface
+        if(!isRemoteInterface(c)) {
+            throw new Error();
+        }
+
+        // Ensure the server object has implemented the interface c.
         if(!isAssignableFromServer(c, server.getClass())) {
-            System.out.println("\nCreated!");
             throw new Error();
         }
         this.server = server;
@@ -87,10 +98,22 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server, InetSocketAddress address)
     {
+        // Ensure the interface is not null.
+        if(c == null) {
+            throw new NullPointerException();
+        }
+
+        // Ensure the input c is an interface.
         if(!c.isInterface()) {
             throw new Error();
         }
 
+        // Ensure the interface throw RMIException which make sure it an remote interface
+        if(!isRemoteInterface(c)) {
+            throw new Error();
+        }
+
+        // Ensure the server object has implemented the interface c.
         if(!isAssignableFromServer(c, server.getClass())) {
             throw new Error();
         }
@@ -168,23 +191,8 @@ public class Skeleton<T>
      */
     public synchronized void start() throws RMIException
     {
-        this.threads = new ArrayList<SkeletonThread<T>>();
-        try {
-            if(this.address == null) {
-                socketServer = new ServerSocket();
-            }
-            else {
-                socketServer = new ServerSocket(this.address.getPort());
-            }
-            while(true) {
-                Socket socket = socketServer.accept();
-                (new SkeletonThread<T>(socket, this.server, this.intf)).start();
-            }
-        }
-        catch(IOException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
+        this.skeletonThread = (new SkeletonThread(this.address, this.intf, this.server));
+        this.skeletonThread.start();
     }
 
     /** Stops the skeleton server, if it is already running.
@@ -199,15 +207,9 @@ public class Skeleton<T>
     public synchronized void stop()
     {
         try {
-            for(SkeletonThread<T> thread: this.threads) {
-                thread.join();
-            }
-            this.socketServer.close();
+            skeletonThread.join();
         }
         catch(InterruptedException e) {
-
-        }
-        catch(IOException e) {
 
         }
     }
@@ -215,5 +217,22 @@ public class Skeleton<T>
     ////////////////////////////////////// Helper Function /////////////////////////////////////////
     private boolean isAssignableFromServer(Class<T> intf, Class<?> server) {
         return intf.isAssignableFrom(server);
+    }
+
+    private boolean isRemoteInterface(Class<T> intf) {
+        Method[] methods = intf.getMethods();
+        for (Method m: methods) {
+            Class<?>[] ecpt = m.getExceptionTypes();
+            boolean found = false;
+            for(Class<?> c: ecpt) {
+                if(c.getName().equals("rmi.RMIException")) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return false;
+        }
+        return true;
     }
 }
