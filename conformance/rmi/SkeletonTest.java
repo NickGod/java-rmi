@@ -113,6 +113,8 @@ public class SkeletonTest extends Test
 
         try
         {
+            System.out.printf("\n\n----- Connecting on %s:%d-----\n",
+                                    this.address.getHostName(), this.address.getPort());
             socket.connect(address);
         }
         catch(Exception e)

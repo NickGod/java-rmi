@@ -12,21 +12,18 @@ public class SkeletonThread<T> extends Thread {
     T server;
     ServerSocket socketServer;
 
-    public SkeletonThread(InetSocketAddress address, Class<T> intf, T server) {
+    public SkeletonThread(ServerSocket socketServer, InetSocketAddress address,
+                Class<T> intf, T server) {
+        this.socketServer = socketServer;
         this.address = address;
         this.intf = intf;
         this.server = server;
     }
-    
+
     public void run() {
         try {
-            if(this.address == null) {
-                this.socketServer = new ServerSocket();
-            }
-            else {
-                this.socketServer = new ServerSocket(this.address.getPort());
-            }
             while(true) {
+                System.out.println("-----Waiting for a connection...-----");
                 Socket socket = this.socketServer.accept();
                 (new ServerThread<T>(socket, this.server, this.intf)).start();
             }

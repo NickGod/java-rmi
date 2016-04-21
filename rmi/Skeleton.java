@@ -31,9 +31,9 @@ public class Skeleton<T>
 {
     T server;
     InetSocketAddress address;
-    SkeletonThread skeletonThread;
+    SkeletonThread<T> skeletonThread;
     Class<T> intf;
-
+    ServerSocket socketServer;
     /** Creates a <code>Skeleton</code> with no initial server address. The
         address will be determined by the system when <code>start</code> is
         called. Equivalent to using <code>Skeleton(null)</code>.
@@ -191,7 +191,28 @@ public class Skeleton<T>
      */
     public synchronized void start() throws RMIException
     {
-        this.skeletonThread = (new SkeletonThread(this.address, this.intf, this.server));
+        try{
+            if(this.address == null) {
+                //System.out.println("\n\n----- Start a Skeleton on default port -----\n");
+                this.socketServer = new ServerSocket();
+            }
+            else {
+                //System.out.printf("\n\n----- Start a Skeleton on %d-----\n", this.address.getPort());
+                this.socketServer = new ServerSocket(
+                                                this.address.getPort(),
+                                                1000,
+                                                this.address.getAddress()
+                                                );
+            }
+        }
+        catch(IOException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,
+                                                    this.intf, this.server));
+        System.out.printf("\n\n----- Waiting for a connection on %s:%d-----\n",
+                                this.address.getHostName(), this.address.getPort());
         this.skeletonThread.start();
     }
 
@@ -207,10 +228,14 @@ public class Skeleton<T>
     public synchronized void stop()
     {
         try {
+            socketServer.close();
             skeletonThread.join();
         }
         catch(InterruptedException e) {
 
+        }
+        catch(IOException e) {
+            
         }
     }
 
