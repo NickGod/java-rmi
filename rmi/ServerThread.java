@@ -16,23 +16,36 @@ public class ServerThread<T> extends Thread {
     public void run() {
         ObjectOutputStream objOutput = null;
         ObjectInputStream objInput = null;
+
         Object ret = null;
         String methodName = null;
         Class<T>[] paramTypes = null;
         Object[] params = null;
         Method method = null;
 
+
         try {
             objOutput = new ObjectOutputStream(this.socket.getOutputStream());
             objOutput.flush();
             objInput = new ObjectInputStream(this.socket.getInputStream());
+        }
+        catch(Exception e) {
+            System.err.println(e.getMessage());
+            close(objInput);
+            close(objOutput);
+            return;
+        }
 
-            //@SuppressWarnings("unchecked")
-            methodName = (String) objInput.readObject();
-            //@SuppressWarnings("unchecked")
-            paramTypes = (Class<T>[]) objInput.readObject();
-            //@SuppressWarnings("unchecked")
-            params = (Object[]) objInput.readObject();
+        try {
+            @SuppressWarnings("unchecked")
+            String _methodName = (String) objInput.readObject();
+            @SuppressWarnings("unchecked")
+            Class<T>[] _paramTypes = (Class<T>[]) objInput.readObject();
+            @SuppressWarnings("unchecked")
+            Object[] _params = (Object[]) objInput.readObject();
+            methodName = _methodName;
+            paramTypes = _paramTypes;
+            params = _params;
 
             method = this.server.getClass().getMethod(methodName, paramTypes);
         }
@@ -55,7 +68,19 @@ public class ServerThread<T> extends Thread {
             objOutput.writeObject(ret);
         }
         catch(Exception e) {
-            //throw new RMIException(e);
+        }
+        finally {
+            close(objInput);
+            close(objOutput);
+        }
+    }
+
+    public static void close(Closeable c) {
+        if (c == null) return;
+        try {
+            c.close();
+        } catch (IOException e) {
+            //log the exception
         }
     }
 }
