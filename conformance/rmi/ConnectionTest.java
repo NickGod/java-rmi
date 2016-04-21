@@ -52,6 +52,8 @@ public class ConnectionTest extends Test
         // Create two stubs - one using the skeleton, and one by specifying the
         // address explicitly. Make sure both can connect to the skeleton and
         // communicate with it correctly.
+
+        System.out.println("===============================================Connection Test Begins");
         TestInterface   stub_implicit;
         TestInterface   stub_explicit;
 
@@ -84,6 +86,7 @@ public class ConnectionTest extends Test
         testStub(stub_explicit);
 
         task();
+        System.out.println("!!!!!!!!!ConnectionTest finish!!!!!!!!!!!");
     }
 
     /** Stops the skeleton server. */

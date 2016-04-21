@@ -16,6 +16,7 @@ public class ServerThread<T> extends Thread {
     public void run() {
         try {
             ObjectOutputStream objOutput = new ObjectOutputStream(this.socket.getOutputStream());
+            objOutput.flush();
             ObjectInputStream objInput = new ObjectInputStream(this.socket.getInputStream());
 
             @SuppressWarnings("unchecked")
@@ -38,7 +39,7 @@ public class ServerThread<T> extends Thread {
 
         }
         catch(InvocationTargetException e) {
-
+            objOutput.writeObject(e);
         }
         catch(ClassNotFoundException e) {
             System.err.println(e.getMessage());

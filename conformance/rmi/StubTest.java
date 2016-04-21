@@ -96,6 +96,7 @@ public class StubTest extends Test
         skeleton.stop();
 
         ensureStubConnects();
+        System.out.println("!!!!!!!!!stub test finish!!!!!!!");
     }
 
     /** Checks that a stub connects to the server for which it was created.
@@ -139,6 +140,7 @@ public class StubTest extends Test
         // Attempt to connect to the listening server.
         try
         {
+            System.out.println("--------------Call Begins");
             stub.method(false);
         }
         catch(RMIException e)
@@ -147,6 +149,7 @@ public class StubTest extends Test
         }
         catch(Throwable t)
         {
+            System.out.println("-------------- Throwable");
             throw new TestFailed("exception when attempting to connect to " +
                                  "server", t);
         }
