@@ -1,6 +1,7 @@
 package rmi;
 import java.net.*;
 import java.io.*;
+import java.lang.reflect.*;
 
 public class SkeletonThread<T> extends Thread {
     Socket socket = null;
@@ -20,6 +21,21 @@ public class SkeletonThread<T> extends Thread {
             Class<T>[] paramTypes = (Class<T>[]) objInput.readObject();
             @SuppressWarnings("unchecked")
             Object[] params = (Object[]) objInput.readObject();
+
+            Method method = this.server.getClass().getMethod(methodName, paramTypes);
+            Object ret = method.invoke(this.server, params);
+
+            ObjectOutputStream objOutput = new ObjectOutputStream(this.socket.getOutputStream());
+            objOutput.writeObject(ret);
+        }
+        catch(NoSuchMethodException e) {
+
+        }
+        catch(IllegalAccessException e) {
+
+        }
+        catch(InvocationTargetException e) {
+            
         }
         catch(ClassNotFoundException e) {
             System.err.println(e.getMessage());
