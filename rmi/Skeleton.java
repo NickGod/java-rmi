@@ -188,15 +188,8 @@ public class Skeleton<T>
                                                 );
             }
         }
-// <<<<<<< HEAD
-//         catch(IOException e) {
-//             //System.out.println("\n\n-----Fail!-----");
-//             System.err.println(e.getMessage());
-//             System.exit(1);
-// =======
         catch(Exception e) {
             service_error(new RMIException(e));
-// >>>>>>> c2bc14e1c0f16e342ccbe71cfb7b1f35f0b98329
         }
         System.out.println("\n\n-----Start Skeleton Thread-----");
         this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,

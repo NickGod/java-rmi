@@ -118,6 +118,9 @@ public class RMIInvocationHandler implements InvocationHandler {
             if(objOutput != null) objOutput.close();
             if(socket != null) socket.close();
         }
+        if(result instanceof InvocationTargetException) {
+            throw ((InvocationTargetException) result).getTargetException();
+        }
         return result;
     }
 }

@@ -122,6 +122,7 @@ public class ConnectionTest extends Test
         try
         {
             stub.method(true);
+            
             throw new TestFailed("exception expected but not received from " +
                                  "stub");
         }

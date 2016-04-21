@@ -14,40 +14,48 @@ public class ServerThread<T> extends Thread {
         this.intf = intf;
     }
     public void run() {
+        ObjectOutputStream objOutput = null;
+        ObjectInputStream objInput = null;
+        Object ret = null;
+        String methodName = null;
+        Class<T>[] paramTypes = null;
+        Object[] params = null;
+        Method method = null;
+
         try {
-            ObjectOutputStream objOutput = new ObjectOutputStream(this.socket.getOutputStream());
+            objOutput = new ObjectOutputStream(this.socket.getOutputStream());
             objOutput.flush();
-            ObjectInputStream objInput = new ObjectInputStream(this.socket.getInputStream());
+            objInput = new ObjectInputStream(this.socket.getInputStream());
 
-            @SuppressWarnings("unchecked")
-            String methodName = (String) objInput.readObject();
-            @SuppressWarnings("unchecked")
-            Class<T>[] paramTypes = (Class<T>[]) objInput.readObject();
-            @SuppressWarnings("unchecked")
-            Object[] params = (Object[]) objInput.readObject();
+            //@SuppressWarnings("unchecked")
+            methodName = (String) objInput.readObject();
+            //@SuppressWarnings("unchecked")
+            paramTypes = (Class<T>[]) objInput.readObject();
+            //@SuppressWarnings("unchecked")
+            params = (Object[]) objInput.readObject();
 
-            Method method = this.server.getClass().getMethod(methodName, paramTypes);
+            method = this.server.getClass().getMethod(methodName, paramTypes);
+        }
+        catch(Exception e) {
+            //throw new RMIException(e);
+        }
 
-            Object ret = method.invoke(this.server, params);
-
+        try{
+            ret = method.invoke(this.server, params);
+        }
+        catch(Exception e) {
+            if(e instanceof InvocationTargetException) {
+                ret = e;
+            }
+            else {
+                //throw new RMIException(e);
+            }
+        }
+        try {
             objOutput.writeObject(ret);
         }
-        catch(NoSuchMethodException e) {
-
-        }
-        catch(IllegalAccessException e) {
-
-        }
-        catch(InvocationTargetException e) {
-            objOutput.writeObject(e);
-        }
-        catch(ClassNotFoundException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-        catch(IOException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+        catch(Exception e) {
+            //throw new RMIException(e);
         }
     }
 }
