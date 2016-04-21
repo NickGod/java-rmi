@@ -104,6 +104,8 @@ public class StubTest extends Test
      */
     private void ensureStubConnects() throws TestFailed
     {
+        System.out.println("--- ensureStubConnects ---");
+
         TestInterface   stub;
 
         // Create the stub.
@@ -222,6 +224,7 @@ public class StubTest extends Test
      */
     private void ensureNonRemoteInterfaceRejected() throws TestFailed
     {
+        System.out.println("---ensureNonRemoteInterfaceRejected---");
         try
         {
             BadInterface    stub = Stub.create(BadInterface.class, address);
@@ -247,6 +250,7 @@ public class StubTest extends Test
      */
     private void ensureNullPointerExceptions() throws TestFailed
     {
+        System.out.println("---ensureNullPointerExceptions---");
         // Make sure that null for the first argument is rejected.
         try
         {
@@ -396,7 +400,9 @@ public class StubTest extends Test
             if(stub1.equals(null))
                 throw new TestFailed("stub is reported as equal to null");
         }
-        catch(TestFailed e) { throw e; }
+        catch(TestFailed e) {
+            throw e;
+        }
         catch(Throwable t)
         {
             throw new TestFailed("equals threw an unexpected exception when " +
@@ -465,6 +471,7 @@ public class StubTest extends Test
         {
             throw new TestFailed("toString threw an unexpected exception", t);
         }
+        System.out.println("--- ensureLocalMethods finished ---");
     }
 
     /** Thread listening for a connection. */

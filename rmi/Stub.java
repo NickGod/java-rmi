@@ -125,14 +125,20 @@ public abstract class Stub
             throw new Error();
         }
 
+        if(!c.isInterface()) {
+            throw new Error();
+        }
+
         // Create a Proxy object for the interface c
-        InvocationHandler handler = new RMIInvocationHandler(address);
+
+
+        InvocationHandler handler = new RMIInvocationHandler(c, address);
 
         @SuppressWarnings("unchecked")
         T stub = (T) Proxy.newProxyInstance(c.getClassLoader(), new Class<?>[]{c}, handler);
+
         return stub;
     }
-
 
     private static <T> boolean isRemoteInterface(Class<T> intf) {
         Method[] methods = intf.getMethods();
