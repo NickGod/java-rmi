@@ -188,8 +188,15 @@ public class Skeleton<T>
                                                 );
             }
         }
+// <<<<<<< HEAD
+//         catch(IOException e) {
+//             //System.out.println("\n\n-----Fail!-----");
+//             System.err.println(e.getMessage());
+//             System.exit(1);
+// =======
         catch(Exception e) {
             service_error(new RMIException(e));
+// >>>>>>> c2bc14e1c0f16e342ccbe71cfb7b1f35f0b98329
         }
         System.out.println("\n\n-----Start Skeleton Thread-----");
         this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,
@@ -200,6 +207,7 @@ public class Skeleton<T>
             this.skeletonThread.start();
         }
         catch (Exception e){
+            System.out.println(e.getMessage());
             listen_error(e);
         }
     }
@@ -216,17 +224,19 @@ public class Skeleton<T>
     public synchronized void stop()
     {
         try {
+            socketServer.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            service_error(new RMIException(e));
+        }
+        try {
             skeletonThread.join();
             stopped(null);
         }
         catch(Exception e) {
+            e.printStackTrace();
             listen_error(e);
-        }
-        try {
-            socketServer.close();
-        }
-        catch (Exception e) {
-            service_error(new RMIException(e));
         }
     }
 
