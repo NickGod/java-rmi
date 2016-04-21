@@ -15,6 +15,7 @@ public class ServerThread<T> extends Thread {
     }
     public void run() {
         try {
+            ObjectOutputStream objOutput = new ObjectOutputStream(this.socket.getOutputStream());
             ObjectInputStream objInput = new ObjectInputStream(this.socket.getInputStream());
 
             @SuppressWarnings("unchecked")
@@ -28,7 +29,6 @@ public class ServerThread<T> extends Thread {
 
             Object ret = method.invoke(this.server, params);
 
-            ObjectOutputStream objOutput = new ObjectOutputStream(this.socket.getOutputStream());
             objOutput.writeObject(ret);
         }
         catch(NoSuchMethodException e) {

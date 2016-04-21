@@ -230,12 +230,13 @@ public class Skeleton<T>
         try {
             socketServer.close();
             skeletonThread.join();
+            stopped(null);
         }
         catch(InterruptedException e) {
 
         }
         catch(IOException e) {
-            
+
         }
     }
 
