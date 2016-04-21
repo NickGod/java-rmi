@@ -96,6 +96,7 @@ public class StubTest extends Test
         skeleton.stop();
 
         ensureStubConnects();
+        System.out.println("!!!!!!!!!stub test finish!!!!!!!");
     }
 
     /** Checks that a stub connects to the server for which it was created.

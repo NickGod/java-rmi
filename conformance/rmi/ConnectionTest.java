@@ -84,6 +84,7 @@ public class ConnectionTest extends Test
         testStub(stub_explicit);
 
         task();
+        System.out.println("!!!!!!!!!ConnectionTest finish!!!!!!!!!!!");
     }
 
     /** Stops the skeleton server. */

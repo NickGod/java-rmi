@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.io.*;
+import java.util.*;
 
 public class RMIInvocationHandler implements InvocationHandler {
     InetSocketAddress skeletonAddress;
@@ -89,7 +90,6 @@ public class RMIInvocationHandler implements InvocationHandler {
             socket = new Socket(this.skeletonAddress.getAddress(),
                                        this.skeletonAddress.getPort());
             objOutput = new ObjectOutputStream(socket.getOutputStream());
-            objInput = new ObjectInputStream(socket.getInputStream());
 
             System.out.println("--------------- Connected!");
 
@@ -98,11 +98,11 @@ public class RMIInvocationHandler implements InvocationHandler {
             objOutput.writeObject(method.getName());
             //System.out.println("\n\n---Writing " + method.getParameterTypes());
             objOutput.writeObject(method.getParameterTypes());
-            System.out.println("\n\n---Writing " + args);
+            System.out.println("\n\n---Writing " + Arrays.toString(args));
             objOutput.writeObject(args);
             objOutput.flush();
 
-
+            objInput = new ObjectInputStream(socket.getInputStream());
             result = objInput.readObject();
         }
         catch(UnknownHostException e) {
