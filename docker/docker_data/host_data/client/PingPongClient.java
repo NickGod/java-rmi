@@ -1,19 +1,39 @@
 package client;
 
+
+import common.*;
 import rmi.*;
 import java.net.*;
 
 public class PingPongClient{
     /** Socket address used for the creation of stubs. */
     private InetSocketAddress           address;
-    /** Dummy skeleton used during the construction of stubs. */
-    private Skeleton<TestInterface>     skeleton;
-    /** Server socket used by the listening thread for the connection check. */
-    private ServerSocket                socket;
+    private static final int NUMBER = 4;
+    private PingPongInterface stub;
 
     public PingPongClient(int portnumber){
-        address = new InetSocketAddress("server", portnumber);
+        int pass = 0;
+        stub = null;
+        try {
+            address = new InetSocketAddress("server", portnumber);
+            stub = Stub.create(PingPongInterface.class, address);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        for(int i = 0; i < NUMBER; i++){
+            try {
+                String res = (String) stub.ping(i);
+                if (res.equals("PONG" + i)){
+                    pass++;
+                }
+            }
+            catch (Exception e){
 
+            }
+        }
+        System.out.print(NUMBER + " Tests Completed, " + (NUMBER - pass) + " Tests Failed");
     }
 
     public static void main (String[] args) {
