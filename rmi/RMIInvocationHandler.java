@@ -65,7 +65,7 @@ public class RMIInvocationHandler implements InvocationHandler {
     public String toStringStub() {
         return this.intf.toString();
     }
-    
+
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = null;
         Socket socket = null;
