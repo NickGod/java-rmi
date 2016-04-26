@@ -23,7 +23,7 @@ public class SkeletonThread<T> extends Thread {
 
     public void run() {
         try {
-            while(!this.socketServer.isClosed()) {
+            while(true) {
                 //System.out.println("-----Waiting for a connection...-----");
                 Socket socket = this.socketServer.accept();
                 ServerThread<T> thread = (new ServerThread<T>(socket, this.server, this.intf));
@@ -32,11 +32,11 @@ public class SkeletonThread<T> extends Thread {
             }
         }
         catch(SocketException e) {
-            //System.out.println(e.getMessage());
             try {
-                for(ServerThread<T> t: this.threads) {
-                    t.join();
-                }
+                if(this.socketServer.isClosed())
+                    for(ServerThread<T> t: this.threads) {
+                        t.join();
+                    }
             }
             catch(InterruptedException ep) {
 
@@ -44,7 +44,6 @@ public class SkeletonThread<T> extends Thread {
         }
         catch(IOException e) {
             e.printStackTrace();
-            System.exit(1);
         }
     }
 }

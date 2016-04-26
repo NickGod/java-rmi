@@ -142,7 +142,7 @@ public class Skeleton<T>
     protected boolean listen_error(Exception exception)
     {
         stop();
-        stopped(exception);
+        //stopped(exception);
         return false;
     }
 
@@ -172,6 +172,11 @@ public class Skeleton<T>
      */
     public synchronized void start() throws RMIException
     {
+        // When the server has already been started and has not since stopped.
+        if(this.socketServer != null && !this.socketServer.isClosed()) {
+            throw new RMIException("The server has already been started and has not since stopped");
+        }
+
         try{
             if(this.address == null) {
                 this.socketServer = new ServerSocket(0);
@@ -189,19 +194,24 @@ public class Skeleton<T>
             }
         }
         catch(Exception e) {
-            service_error(new RMIException(e));
+            // service_error(new RMIException(e));
+            // When the listening socket cannot be created or bound.
+            throw new RMIException(e);
         }
+        try {
         //System.out.println("\n\n-----Start Skeleton Thread-----");
-        this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,
+            this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,
                                                     this.intf, this.server));
         //System.out.printf("\n\n----- Waiting for a connection on %s:%d-----\n",
         //                        this.address.getHostName(), this.address.getPort());
-        try {
             this.skeletonThread.start();
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
+
+            // When the listening thread cannot be created
             listen_error(e);
+
+            throw new RMIException(e);
         }
     }
 
@@ -216,12 +226,14 @@ public class Skeleton<T>
      */
     public synchronized void stop()
     {
+        this.address = null;
         try {
-            socketServer.close();
+            if(this.socketServer != null && !this.socketServer.isClosed())
+                socketServer.close();
         }
         catch (Exception e) {
             e.printStackTrace();
-            service_error(new RMIException(e));
+            listen_error(e);
         }
         try {
             skeletonThread.join();

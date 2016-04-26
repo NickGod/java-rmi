@@ -48,7 +48,7 @@ public abstract class Stub
                       this interface cannot be dynamically created.
      */
     public static <T> T create(Class<T> c, Skeleton<T> skeleton)
-        throws UnknownHostException
+        throws UnknownHostException, IllegalStateException, NullPointerException
     {
         if(skeleton.address == null) {
             throw new IllegalStateException();
@@ -91,15 +91,17 @@ public abstract class Stub
                       <code>RMIException</code>, or if an object implementing
                       this interface cannot be dynamically created.
      */
-    public static <T> T create(Class<T> c, Skeleton<T> skeleton,
-                               String hostname)
+    public static <T> T create(Class<T> c, Skeleton<T> skeleton, String hostname)
+        throws IllegalStateException, NullPointerException, Error
     {
+        if(skeleton == null || hostname == null) {
+            throw new NullPointerException();
+        }
+
         if(skeleton.address == null) {
             throw new IllegalStateException();
         }
-        if(hostname == null) {
-            throw new NullPointerException();
-        }
+
         return create(c, new InetSocketAddress(hostname, skeleton.address.getPort()));
     }
 
@@ -121,6 +123,7 @@ public abstract class Stub
                       this interface cannot be dynamically created.
      */
     public static <T> T create(Class<T> c, InetSocketAddress address)
+        throws NullPointerException, Error
     {
         if(c == null || address == null) {
             throw new NullPointerException();
