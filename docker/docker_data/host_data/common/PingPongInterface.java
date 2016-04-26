@@ -4,5 +4,5 @@ import rmi.RMIException;
 import java.io.FileNotFoundException;
 
 public interface PingPongInterface{
-    public Object ping(int idNumber) throws RMIException, FileNotFoundException;
+    public Object ping(int idNumber) throws RMIException;
 }

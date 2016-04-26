@@ -2,9 +2,10 @@ package server;
 
 import rmi.*;
 import common.*;
+import java.net.*;
 
-public class PingServerFactory implements PingPongInterface {
-    public static PingPongServer makePingPongServer() {
+public class PingServerFactory {
+    public static PingPongServer makePingServer() {
         return new PingPongServer();
     }
 
@@ -15,15 +16,17 @@ public class PingServerFactory implements PingPongInterface {
         }
         int port = Integer.parseInt(args[0]);
 
-        Skeleton<TestInterface> skeleton = Skeleton(
+        @SuppressWarnings("unchecked")
+        Skeleton<PingPongInterface> skeleton = new Skeleton(
                                             PingPongInterface.class,
-                                            new PingPongServer(),
+                                            PingServerFactory.makePingServer(),
                                             new InetSocketAddress(port)
                                             );
-        skeleton.start();
-    }
+        try {
+            skeleton.start();
+        }
+        catch(RMIException e) {
 
-    public Object ping(int idNumber) throws RMIException, FileNotFoundException {
-        return "Pong " + String.valueOf(idNumber);
+        }
     }
 }

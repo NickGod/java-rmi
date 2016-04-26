@@ -15,7 +15,7 @@ public class PingPongClient{
         int pass = 0;
         stub = null;
         try {
-            address = new InetSocketAddress("server", portnumber);
+            address = new InetSocketAddress("172.19.98.13", portnumber);
             stub = Stub.create(PingPongInterface.class, address);
         }
         catch (Exception e){
@@ -25,12 +25,13 @@ public class PingPongClient{
         for(int i = 0; i < NUMBER; i++){
             try {
                 String res = (String) stub.ping(i);
+                System.out.println(res);
                 if (res.equals("PONG" + i)){
                     pass++;
                 }
             }
             catch (Exception e){
-
+                e.printStackTrace();
             }
         }
         System.out.print(NUMBER + " Tests Completed, " + (NUMBER - pass) + " Tests Failed");
