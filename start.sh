@@ -24,14 +24,14 @@ docker build -t tomatosliu/ubuntu_sc:0.1 docker/docker_sc
 
 # Run data volume container and catclient/catserver containers
 docker run -itd -v /data --name data tomatosliu/ubuntu_data:0.1 bash
-docker run -itd --volumes-from data --name server tomatosliu/ubuntu_sc:0.1 java -cp data/rmi.jar: data/server/PingServerFactory $1
-docker run -itd --volumes-from data --link server --name client tomatosliu/ubuntu_sc:0.1 java -cp data/rmi.jar: data/client/PingPongClient $1
+docker run -itd --volumes-from data --name server tomatosliu/ubuntu_sc:0.1 sh data/start_ping_server.sh $1
+docker run -itd --volumes-from data --link server --name client tomatosliu/ubuntu_sc:0.1 sh data/start_ping_client.sh $1
 
 # Some sort of test, print the log and see the result and verification
 echo "=============================build completed============================="
 echo ""
-echo 'Running the communication between client and server... (about 1 sec)'
-sleep 1s
+echo 'Running the communication between client and server... (about 2 sec)'
+sleep 2s
 echo "============================Running completed============================"
 echo ""
 echo "$ docker logs client"
