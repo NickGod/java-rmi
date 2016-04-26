@@ -1,7 +1,7 @@
-package server;
+package data.server;
 
 import rmi.*;
-import common.*;
+import data.common.*;
 import java.net.*;
 
 public class PingServerFactory {

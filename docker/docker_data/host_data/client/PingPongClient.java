@@ -1,11 +1,11 @@
-package client;
+package data.client;
 
 
-import common.*;
+import data.common.*;
 import rmi.*;
 import java.net.*;
 
-public class PingPongClient{
+public class PingPongClient {
     /** Socket address used for the creation of stubs. */
     private InetSocketAddress           address;
     private static final int NUMBER = 4;
@@ -15,18 +15,19 @@ public class PingPongClient{
         int pass = 0;
         stub = null;
         try {
-            address = new InetSocketAddress("172.19.98.13", portnumber);
+            address = new InetSocketAddress("server", portnumber);
             stub = Stub.create(PingPongInterface.class, address);
         }
         catch (Exception e){
             e.printStackTrace();
             System.exit(-1);
         }
+
         for(int i = 0; i < NUMBER; i++){
             try {
                 String res = (String) stub.ping(i);
-                System.out.println(res);
-                if (res.equals("PONG" + i)){
+                System.out.println("Received: " + res);
+                if (res.equals("Pong " + i)){
                     pass++;
                 }
             }
@@ -43,7 +44,7 @@ public class PingPongClient{
             System.exit(-1);
         }
         String portString = args[0];
-        System.out.println(portString);
+        System.out.println("Connecting server on port " + String.valueOf(portString));
         int portnumber = Integer.parseInt(portString);
         PingPongClient client = new PingPongClient(portnumber);
     }

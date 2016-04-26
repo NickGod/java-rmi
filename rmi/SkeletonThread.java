@@ -26,6 +26,7 @@ public class SkeletonThread<T> extends Thread {
             while(true) {
                 //System.out.println("-----Waiting for a connection...-----");
                 Socket socket = this.socketServer.accept();
+                //System.out.println("Client Connected!");
                 ServerThread<T> thread = (new ServerThread<T>(socket, this.server, this.intf));
                 thread.start();
                 threads.add(thread);

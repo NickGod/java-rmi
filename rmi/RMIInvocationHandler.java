@@ -85,6 +85,7 @@ public class RMIInvocationHandler implements InvocationHandler {
 
         try {
             //System.out.println("---------------" + this.skeletonAddress.toString());
+
             socket = new Socket(this.skeletonAddress.getAddress(),
                                        this.skeletonAddress.getPort());
             objOutput = new ObjectOutputStream(socket.getOutputStream());
