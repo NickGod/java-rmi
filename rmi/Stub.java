@@ -55,7 +55,8 @@ public abstract class Stub
             throw new IllegalStateException();
         }
 
-        if(!skeleton.address.getAddress().isAnyLocalAddress()) {
+        if((skeleton.address.getAddress().isAnyLocalAddress()) && ((Integer) skeleton.address.getPort() != null)
+                && (skeleton.address.getHostName() == null)) {
             throw new UnknownHostException();
         }
 

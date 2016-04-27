@@ -7,12 +7,15 @@ public class ServerThread<T> extends Thread {
     Socket socket = null;
     T server = null;
     Class<T> intf;
+    Skeleton<T> skeleton;
 
-    public ServerThread(Socket socket, T server, Class<T> intf) {
+    public ServerThread(Skeleton<T> skeleton, Socket socket, T server, Class<T> intf) {
+        this.skeleton = skeleton;
         this.socket = socket;
         this.server = server;
         this.intf = intf;
     }
+
     public void run() {
         ObjectOutputStream objOutput = null;
         ObjectInputStream objInput = null;
@@ -27,6 +30,8 @@ public class ServerThread<T> extends Thread {
             System.err.println(e.getMessage());
             close(objInput);
             close(objOutput);
+            // Exception thrown in service response.
+            this.skeleton.service_error(new RMIException("Exception thrown in service response."));
             return;
         }
 
@@ -50,6 +55,8 @@ public class ServerThread<T> extends Thread {
                 //throw new RMIException(e);
                 close(objInput);
                 close(objOutput);
+                // Exception thrown in service response.
+                this.skeleton.service_error(new RMIException("Exception thrown in service response."));
                 return;
             }
         }
@@ -58,6 +65,8 @@ public class ServerThread<T> extends Thread {
             objOutput.writeObject(ret);
         }
         catch(Exception e) {
+            // Exception thrown in service response.
+            this.skeleton.service_error(new RMIException("Exception thrown in service response."));
         }
         finally {
             close(objInput);
@@ -70,7 +79,7 @@ public class ServerThread<T> extends Thread {
         try {
             c.close();
         } catch (IOException e) {
-            //log the exception
+            // ignore the exception
         }
     }
 }

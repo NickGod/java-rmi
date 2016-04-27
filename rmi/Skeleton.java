@@ -56,7 +56,7 @@ public class Skeleton<T>
     public Skeleton(Class<T> c, T server)
     {
         // Ensure the interface is not null.
-        if(c == null) {
+        if(c == null || server == null) {
             throw new NullPointerException();
         }
 
@@ -122,6 +122,9 @@ public class Skeleton<T>
      */
     protected void stopped(Throwable cause)
     {
+        if (cause != null) {
+            cause.printStackTrace();
+        }
     }
 
     /** Called when an exception occurs at the top level in the listening
@@ -142,7 +145,6 @@ public class Skeleton<T>
     protected boolean listen_error(Exception exception)
     {
         stop();
-        //stopped(exception);
         return false;
     }
 
@@ -155,6 +157,9 @@ public class Skeleton<T>
      */
     protected void service_error(RMIException exception)
     {
+        if (!exception.getClass().equals(EOFException.class)) {
+            exception.printStackTrace();
+        }
     }
 
     /** Starts the skeleton server.
@@ -200,7 +205,7 @@ public class Skeleton<T>
         }
         try {
         //System.out.println("\n\n-----Start Skeleton Thread-----");
-            this.skeletonThread = (new SkeletonThread<T>(this.socketServer, this.address,
+            this.skeletonThread = (new SkeletonThread<T>(this, this.socketServer, this.address,
                                                     this.intf, this.server));
         //System.out.printf("\n\n----- Waiting for a connection on %s:%d-----\n",
         //                        this.address.getHostName(), this.address.getPort());
@@ -232,7 +237,6 @@ public class Skeleton<T>
                 socketServer.close();
         }
         catch (Exception e) {
-            e.printStackTrace();
             listen_error(e);
         }
         try {
