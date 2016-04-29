@@ -9,14 +9,15 @@ public class PingPongClient {
     /** Socket address used for the creation of stubs. */
     private InetSocketAddress           address;
     private static final int NUMBER = 4;
-    private PingPongInterface stub;
+    private FactoryInterface stubFactory;
 
     public PingPongClient(int portnumber){
         int pass = 0;
-        stub = null;
+        PingPongInterface stubServer = null;
         try {
             address = new InetSocketAddress("server", portnumber);
-            stub = Stub.create(PingPongInterface.class, address);
+            this.stubFactory = Stub.create(FactoryInterface.class, address);
+            stubServer = this.stubFactory.makePingServer();
         }
         catch (Exception e){
             e.printStackTrace();
@@ -25,7 +26,7 @@ public class PingPongClient {
 
         for(int i = 0; i < NUMBER; i++){
             try {
-                String res = (String) stub.ping(i);
+                String res = (String) stubServer.ping(i);
                 System.out.println("Received: " + res);
                 if (res.equals("Pong " + i)){
                     pass++;

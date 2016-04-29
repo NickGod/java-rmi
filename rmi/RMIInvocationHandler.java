@@ -64,7 +64,7 @@ public class RMIInvocationHandler implements InvocationHandler, Serializable {
         }
 
         try {
-            //System.out.println("---------------" + this.skeletonAddress.toString());
+            // System.out.println("---------------" + this.skeletonAddress.getAddress().toString());
 
             socket = new Socket(this.skeletonAddress.getAddress(),
                                        this.skeletonAddress.getPort());

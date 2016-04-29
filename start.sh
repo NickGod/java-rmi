@@ -30,8 +30,8 @@ docker run -itd --volumes-from data --link server --name client tomatosliu/ubunt
 # Some sort of test, print the log and see the result and verification
 echo "=============================build completed============================="
 echo ""
-echo 'Running the communication between client and server... (about 2 sec)'
-sleep 2s
+echo 'Running the communication between client and server... (about 5 sec)'
+sleep 4s
 echo "============================Running completed============================"
 echo ""
 echo "$ docker logs client"

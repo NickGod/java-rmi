@@ -1,4 +1,2 @@
-FROM ubuntu:latest
+FROM java:7
 MAINTAINER Kai-Siyuan <siyuanliu@ucsd.edu>
-
-RUN apt-get update && apt-get install -y default-jdk
