@@ -43,9 +43,16 @@ public class ServerThread<T> extends Thread {
             @SuppressWarnings("unchecked")
             Object[] params = (Object[]) objInput.readObject();
 
+            this.intf.getMethod(methodName, paramTypes);
+
             Method method = this.server.getClass().getMethod(methodName, paramTypes);
 
+
+            if(!method.isAccessible()) {
+                method.setAccessible(true);
+            }
             ret = method.invoke(this.server, params);
+
         }
         catch(Exception e) {
             if(e instanceof InvocationTargetException) {
@@ -56,7 +63,7 @@ public class ServerThread<T> extends Thread {
                 close(objInput);
                 close(objOutput);
                 // Exception thrown in service response.
-                this.skeleton.service_error(new RMIException("Exception thrown in service response."));
+                this.skeleton.service_error(new RMIException("Exception thrown in service response.", e));
                 return;
             }
         }

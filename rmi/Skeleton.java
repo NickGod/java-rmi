@@ -231,7 +231,7 @@ public class Skeleton<T>
      */
     public synchronized void stop()
     {
-        this.address = null;
+        // this.address = null;
         try {
             if(this.socketServer != null && !this.socketServer.isClosed())
                 socketServer.close();

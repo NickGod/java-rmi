@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import java.io.*;
 import java.util.*;
 
-public class RMIInvocationHandler implements InvocationHandler {
+public class RMIInvocationHandler implements InvocationHandler, Serializable {
     InetSocketAddress skeletonAddress;
     Class<?> intf;
 
@@ -15,42 +15,21 @@ public class RMIInvocationHandler implements InvocationHandler {
         this.skeletonAddress = address;
     }
 
-    public InetSocketAddress getInetSocketAddress() {
-        return this.skeletonAddress;
-    }
-
-    public Class<?> getIntf() {
-        return this.intf;
-    }
 
     public boolean equalsStub(Object stub) {
         if(stub == null) {
             return false;
         }
 
-        InvocationHandler stubhandler = Proxy.getInvocationHandler(stub);
-
-
         try {
-            // Invoke getInetSocketAddress method from stub
-            Method inetMethod = RMIInvocationHandler.class.getMethod("getInetSocketAddress");
-            @SuppressWarnings("unchecked")
-            InetSocketAddress address = (InetSocketAddress) stubhandler.invoke(stub, inetMethod, new Object[]{});
-
-            // Invoke getIntf method from stub
-            Method intfMethod = RMIInvocationHandler.class.getMethod("getIntf");
-            @SuppressWarnings("unchecked")
-            Class<?> intf = (Class<?>) stubhandler.invoke(stub, intfMethod, new Object[]{});
-            if(this.skeletonAddress.toString().equals(address.toString())
-                    && this.intf.toString().equals(intf.toString())) {
+            RMIInvocationHandler stubhandler = (RMIInvocationHandler) Proxy.getInvocationHandler(stub);
+            if(this.skeletonAddress.toString().equals(stubhandler.skeletonAddress.toString())
+                    && this.intf.toString().equals(stubhandler.intf.toString())) {
                 return true;
             }
             else {
                 return false;
             }
-        }
-        catch(NoSuchMethodException e) {
-            return false;
         }
         catch(Throwable e) {
             return false;
@@ -58,12 +37,11 @@ public class RMIInvocationHandler implements InvocationHandler {
     }
 
     public int hashCodeStub() {
-        //System.out.println("-----------------------" + this.intf.toString());
         return (this.intf.toString() + this.skeletonAddress.toString()).hashCode();
     }
 
     public String toStringStub() {
-        return this.intf.toString();
+        return this.intf.toString() + this.skeletonAddress.toString();
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -73,14 +51,16 @@ public class RMIInvocationHandler implements InvocationHandler {
         ObjectInputStream objInput = null;
 
         //System.out.println(method.getName());
-
-        switch(method.getName()) {
-            case "equals":                  return this.equalsStub(args[0]);
-            case "hashCode":                return this.hashCodeStub();
-            case "toString":                return this.toStringStub();
-            case "getInetSocketAddress":    return this.getInetSocketAddress();
-            case "getIntf":                 return this.getIntf();
-            default:                        break;
+        try {
+            this.intf.getMethod(method.getName(), method.getParameterTypes());
+        }
+        catch(NoSuchMethodException e) {
+            switch(method.getName()) {
+                case "equals":                  return this.equalsStub(args[0]);
+                case "hashCode":                return this.hashCodeStub();
+                case "toString":                return this.toStringStub();
+                default:                        break;
+            }
         }
 
         try {
