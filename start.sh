@@ -8,9 +8,9 @@ if [[ $# -lt 1 ]] ; then
 fi
 
 # Compile java files and create jar for rmi package
-#javac docker/docker_data/host_data/PingPongClient.java
-#javac docker/docker_data/host_data/PingPongServer.java
-#jar -cvf docker/docker_data/host_data/rmi.jar rmi/*
+make clean
+make
+jar -cvf docker/docker_data/host_data/rmi.jar rmi/*
 
 # Start a Docker Daemon
 docker-machine rm -f kai-siyuan-proj1

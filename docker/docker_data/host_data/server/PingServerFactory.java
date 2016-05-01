@@ -17,7 +17,7 @@ public class PingServerFactory implements FactoryInterface {
         Skeleton<PingPongInterface> skeleton = null;
         try {
             // System.out.println("Server address: " + InetAddress.getLocalHost().toString());
-            skeleton = new Skeleton(
+            skeleton = new Skeleton<PingPongInterface>(
                                     PingPongInterface.class,
                                     new PingPongServer(),
                                     new InetSocketAddress(InetAddress.getLocalHost(), this.address.getPort() + numServer)
@@ -53,11 +53,11 @@ public class PingServerFactory implements FactoryInterface {
         // System.out.println("Factory address: " + factoryAddr.getAddress().toString());
 
         @SuppressWarnings("unchecked")
-        Skeleton<PingPongInterface> skeleton = new Skeleton(
-                                            FactoryInterface.class,
-                                            factory,
-                                            new InetSocketAddress(port)
-                                            );
+        Skeleton<FactoryInterface> skeleton = new Skeleton<FactoryInterface> (
+                                                    FactoryInterface.class,
+                                                    factory,
+                                                    new InetSocketAddress(port)
+                                                    );
         try {
             skeleton.start();
         }

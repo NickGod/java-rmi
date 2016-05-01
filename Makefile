@@ -40,7 +40,7 @@ UNITCLASSPATH = ".$(CPSEPARATOR)unit"
 # Compile all Java files.
 .PHONY : all-classes
 all-classes :
-	/usr/libexec/java_home -v 1.7.0_79 --exec javac  $(JAVAFILES)
+	javac $(JAVAFILES)
 
 # Run unit and conformance tests.
 .PHONY : test
